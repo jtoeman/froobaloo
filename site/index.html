@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Froobaloo</title>
+<meta name="description" content="Little daily games. A fresh puzzle in each one, every day.">
+<meta name="theme-color" content="#F1EEF8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#17142A" media="(prefers-color-scheme: dark)">
+<meta property="og:title" content="Froobaloo">
+<meta property="og:description" content="Little daily games. A fresh puzzle in each one, every day.">
+<meta property="og:url" content="https://froobaloo.com/">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Baloo+2:wght@600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --page: #F1EEF8;
+    --ink: #221D3D;
+    --ink-soft: #5E5880;
+    --sun: #F2B33D;
+    --mint: #3FB59A;
+    --coral: #E86A5B;
+    --violet: #6C63E0;
+    --sky: #3E9BDB;
+    --tile-shadow: #221D3D;
+    --focus: #6C63E0;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #17142A;
+      --ink: #F1EEF8;
+      --ink-soft: #ABA5CC;
+      --tile-shadow: #0B0918;
+      --focus: #B3ADFF;
+    }
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+
+  main { flex: 1; width: 100%; max-width: 1040px; margin: 0 auto; padding: 56px 16px 40px; }
+
+  /* The wordmark: nine letter tiles. */
+  .wordmark {
+    display: flex;
+    justify-content: center;
+    gap: clamp(4px, 1.2vw, 10px);
+    margin: 0;
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 800;
+    line-height: 1;
+  }
+  .tile {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(32px, 9vw, 76px);
+    aspect-ratio: 1;
+    border-radius: clamp(7px, 1.6vw, 14px);
+    background: var(--c);
+    color: #fff;
+    font-size: clamp(22px, 6.4vw, 54px);
+    padding-top: .08em;
+    box-shadow: 0 clamp(3px, .7vw, 6px) 0 var(--tile-shadow);
+    transform: rotate(var(--r));
+    animation: drop .55s cubic-bezier(.3, 1.5, .5, 1) both;
+    animation-delay: calc(var(--i) * 55ms);
+  }
+  .tile sub {
+    position: absolute;
+    right: 12%;
+    bottom: 9%;
+    font-family: "Atkinson Hyperlegible", system-ui, sans-serif;
+    font-size: .26em;
+    font-weight: 700;
+    opacity: .85;
+  }
+  @keyframes drop {
+    from { transform: translateY(-40px) rotate(0deg); opacity: 0; }
+    to { transform: rotate(var(--r)); opacity: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tile { animation: none; }
+    .game { transition: none; }
+  }
+
+  .tagline {
+    margin: 22px auto 0;
+    max-width: 40ch;
+    text-align: center;
+    text-wrap: balance;
+    color: var(--ink-soft);
+    font-size: 1.125rem;
+  }
+
+  /* Game cards: each wears its own game's colors. */
+  .games {
+    list-style: none;
+    margin: 52px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+  }
+  .game {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    border-radius: 18px;
+    overflow: hidden;
+    background: var(--card);
+    color: var(--card-ink);
+    box-shadow: 0 5px 0 var(--tile-shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .game:hover { transform: translateY(-3px); box-shadow: 0 8px 0 var(--tile-shadow); }
+  .game:active { transform: translateY(2px); box-shadow: 0 3px 0 var(--tile-shadow); }
+  .art { padding: 18px 18px 0; }
+  .art svg { display: block; width: 100%; height: auto; font-family: "Atkinson Hyperlegible", system-ui, sans-serif; }
+  .info { padding: 14px 22px 22px; }
+  .game h2 {
+    margin: 0;
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+  .game p { margin: 6px 0 0; color: var(--card-soft); font-size: 1rem; }
+
+  .wordsummit { --card: #1c1917; --card-ink: #fef3c7; --card-soft: #a8a29e; }
+  .caseboard { --card: #e8ebe1; --card-ink: #1c2430; --card-soft: #5c6a63; }
+  .movieleague { --card: #111827; --card-ink: #f9fafb; --card-soft: #9ca3af; }
+
+  footer {
+    padding: 28px 16px 36px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: .9375rem;
+  }
+</style>
+</head>
+<body>
+<main>
+  <h1 class="wordmark" aria-label="Froobaloo">
+    <span class="tile" aria-hidden="true" style="--c:var(--violet);--r:-4deg;--i:0">F<sub>4</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--coral);--r:3deg;--i:1">R<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--sun);--r:-2deg;--i:2">O<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--mint);--r:4deg;--i:3">O<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--sky);--r:-3deg;--i:4">B<sub>3</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--violet);--r:2deg;--i:5">A<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--coral);--r:-4deg;--i:6">L<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--mint);--r:3deg;--i:7">O<sub>1</sub></span>
+    <span class="tile" aria-hidden="true" style="--c:var(--sun);--r:-2deg;--i:8">O<sub>1</sub></span>
+  </h1>
+  <p class="tagline">Little daily games. A fresh puzzle in each one, every day.</p>
+
+  <ul class="games">
+    <li>
+      <a class="game wordsummit" href="/wordsummit/">
+        <div class="art"><svg viewBox="0 0 200 144" role="img" aria-label="A 5 by 5 letter grid with the word SUMMIT traced through it"><polyline points="76,24 100,24 100,48 100,72 76,72 76,96" fill="none" stroke="#60a5fa" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/><rect x="42" y="14" width="20" height="20" rx="4" fill="#fef3c7"/><text x="52" y="28.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">Q</text><rect x="66" y="14" width="20" height="20" rx="4" fill="#60a5fa"/><text x="76" y="28.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">S</text><rect x="90" y="14" width="20" height="20" rx="4" fill="#60a5fa"/><text x="100" y="28.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">U</text><rect x="114" y="14" width="20" height="20" rx="4" fill="#fef3c7"/><text x="124" y="28.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">L</text><rect x="138" y="14" width="20" height="20" rx="4" fill="#fef3c7"/><text x="148" y="28.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">E</text><rect x="42" y="38" width="20" height="20" rx="4" fill="#fef3c7"/><text x="52" y="52.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">R</text><rect x="66" y="38" width="20" height="20" rx="4" fill="#fef3c7"/><text x="76" y="52.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">A</text><rect x="90" y="38" width="20" height="20" rx="4" fill="#60a5fa"/><text x="100" y="52.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">M</text><rect x="114" y="38" width="20" height="20" rx="4" fill="#fef3c7"/><text x="124" y="52.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">P</text><rect x="138" y="38" width="20" height="20" rx="4" fill="#a855f7"/><text x="148" y="52.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">O</text><rect x="42" y="62" width="20" height="20" rx="4" fill="#fef3c7"/><text x="52" y="76.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">T</text><rect x="66" y="62" width="20" height="20" rx="4" fill="#60a5fa"/><text x="76" y="76.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">I</text><rect x="90" y="62" width="20" height="20" rx="4" fill="#60a5fa"/><text x="100" y="76.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">M</text><rect x="114" y="62" width="20" height="20" rx="4" fill="#fef3c7"/><text x="124" y="76.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">N</text><rect x="138" y="62" width="20" height="20" rx="4" fill="#fef3c7"/><text x="148" y="76.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">D</text><rect x="42" y="86" width="20" height="20" rx="4" fill="#fef3c7"/><text x="52" y="100.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">K</text><rect x="66" y="86" width="20" height="20" rx="4" fill="#60a5fa"/><text x="76" y="100.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">T</text><rect x="90" y="86" width="20" height="20" rx="4" fill="#fef3c7"/><text x="100" y="100.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">E</text><rect x="114" y="86" width="20" height="20" rx="4" fill="#7e22ce"/><text x="124" y="100.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">W</text><rect x="138" y="86" width="20" height="20" rx="4" fill="#fef3c7"/><text x="148" y="100.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">B</text><rect x="42" y="110" width="20" height="20" rx="4" fill="#fef3c7"/><text x="52" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">H</text><rect x="66" y="110" width="20" height="20" rx="4" fill="#fef3c7"/><text x="76" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">O</text><rect x="90" y="110" width="20" height="20" rx="4" fill="#fef3c7"/><text x="100" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">C</text><rect x="114" y="110" width="20" height="20" rx="4" fill="#fef3c7"/><text x="124" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#292524">A</text><rect x="138" y="110" width="20" height="20" rx="4" fill="#c2410c"/><text x="148" y="124.5" text-anchor="middle" font-size="12" font-weight="700" fill="#ffffff">G</text></svg></div>
+        <div class="info">
+          <h2>Wordsummit</h2>
+          <p>Trace words through a grid of letter tiles. Find the day's top-scoring word in five tries.</p>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a class="game caseboard" href="/caseboard/">
+        <div class="art"><svg viewBox="0 0 200 144" role="img" aria-label="A 5 by 5 board of word cards, some marked as found"><rect x="15" y="15" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="24.0" y="22.5" width="12" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="50" y="15" width="30" height="18" rx="3" fill="#d9a44e" stroke="#a8752f"/><rect x="54.5" y="22.5" width="21" height="3" rx="1.5" fill="#221704" opacity=".7"/><rect x="85" y="15" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="91.0" y="22.5" width="18" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="120" y="15" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="127.5" y="22.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="155" y="15" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="164.0" y="22.5" width="12" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="15" y="39" width="30" height="18" rx="3" fill="#8f4468" stroke="#6b2a4a"/><rect x="19.5" y="46.5" width="21" height="3" rx="1.5" fill="#fbeef4" opacity=".7"/><rect x="50" y="39" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="56.0" y="46.5" width="18" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="85" y="39" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="92.5" y="46.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="120" y="39" width="30" height="18" rx="3" fill="#d9a44e" stroke="#a8752f"/><rect x="129.0" y="46.5" width="12" height="3" rx="1.5" fill="#221704" opacity=".7"/><rect x="155" y="39" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="159.5" y="46.5" width="21" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="15" y="63" width="30" height="18" rx="3" fill="#d9a44e" stroke="#a8752f"/><rect x="21.0" y="70.5" width="18" height="3" rx="1.5" fill="#221704" opacity=".7"/><rect x="50" y="63" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="57.5" y="70.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="85" y="63" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="94.0" y="70.5" width="12" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="120" y="63" width="30" height="18" rx="3" fill="#c26e5c" stroke="#93372c"/><rect x="124.5" y="70.5" width="21" height="3" rx="1.5" fill="#fdf3ee" opacity=".7"/><rect x="155" y="63" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="161.0" y="70.5" width="18" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="15" y="87" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="22.5" y="94.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="50" y="87" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="59.0" y="94.5" width="12" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="85" y="87" width="30" height="18" rx="3" fill="#d9a44e" stroke="#a8752f"/><rect x="89.5" y="94.5" width="21" height="3" rx="1.5" fill="#221704" opacity=".7"/><rect x="120" y="87" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="126.0" y="94.5" width="18" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="155" y="87" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="162.5" y="94.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="15" y="111" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="24.0" y="118.5" width="12" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="50" y="111" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="54.5" y="118.5" width="21" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="85" y="111" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="91.0" y="118.5" width="18" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="120" y="111" width="30" height="18" rx="3" fill="#fcfcf8" stroke="#c7cdb9"/><rect x="127.5" y="118.5" width="15" height="3" rx="1.5" fill="#8b9689" opacity=".7"/><rect x="155" y="111" width="30" height="18" rx="3" fill="#d9a44e" stroke="#a8752f"/><rect x="164.0" y="118.5" width="12" height="3" rx="1.5" fill="#221704" opacity=".7"/></svg></div>
+        <div class="info">
+          <h2>Caseboard</h2>
+          <p>Follow the clues to find eight hidden words on the board. Watch out for red herrings.</p>
+        </div>
+      </a>
+    </li>
+    <li>
+      <a class="game movieleague" href="/movieleague/">
+        <div class="art"><svg viewBox="0 0 200 144" role="img" aria-label="Five movie posters with stacks of voting chips under them"><rect x="19" y="12" width="26" height="54" rx="3" fill="#4b5563" stroke="#fbbf24" stroke-width="2"/><rect x="24" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="32" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="109" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="102" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="95" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="88" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="53" y="12" width="26" height="54" rx="3" fill="#374151"/><rect x="58" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="66" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="66" cy="109" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="66" cy="102" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="87" y="12" width="26" height="54" rx="3" fill="#52525b"/><rect x="92" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="100" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="121" y="12" width="26" height="54" rx="3" fill="#3f3f46"/><rect x="126" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="134" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="155" y="12" width="26" height="54" rx="3" fill="#334155"/><rect x="160" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><line x1="12" y1="122" x2="188" y2="122" stroke="#374151" stroke-width="2" stroke-linecap="round"/></svg></div>
+        <div class="info">
+          <h2>The Movie League</h2>
+          <p>Pick a movie for today's theme, bet your chips on the top five, and climb the leaderboard.</p>
+        </div>
+      </a>
+    </li>
+  </ul>
+</main>
+<footer>Made by <a href="https://jeremytoeman.com">Jeremy Toeman</a></footer>
+</body>
+</html>

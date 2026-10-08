@@ -1,0 +1,75 @@
+name: Deploy froobaloo.com
+
+# Assembles froobaloo.com from the hub page in site/ plus each game's built files,
+# then publishes to GitHub Pages. Runs when this repo changes, when a game repo
+# pings it (repository_dispatch "game-updated"), or by hand.
+#
+#   /               site/                          (this repo)
+#   /wordsummit/    jtoeman/scrabboggle@site       (built by that repo)
+#   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
+#   /movieleague/   jtoeman/movieleague@site       (built by that repo, includes /test/)
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [game-updated]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/scrabboggle
+          ref: site
+          path: _games/wordsummit
+          token: ${{ secrets.HUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/caseboard
+          ref: main
+          path: _games/caseboard
+          token: ${{ secrets.HUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/movieleague
+          ref: site
+          path: _games/movieleague
+          token: ${{ secrets.HUB_TOKEN }}
+
+      - name: Assemble the site
+        run: |
+          mkdir _site
+          cp -R site/. _site/
+          rsync -a --exclude .git --exclude 404.html _games/wordsummit/ _site/wordsummit/
+          rsync -a --exclude .git --exclude 404.html _games/movieleague/ _site/movieleague/
+          rsync -a --exclude .git --exclude .github --exclude README.md --exclude '*.gs' \
+            _games/caseboard/ _site/caseboard/
+          find _site -maxdepth 2 -type f | sort
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
