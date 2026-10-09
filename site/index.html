@@ -26,6 +26,8 @@
     --sky: #3E9BDB;
     --tile-shadow: #221D3D;
     --focus: #6C63E0;
+    --panel: #FFFFFF;
+    --line: #D6D1E6;
   }
   @media (prefers-color-scheme: dark) {
     :root {
@@ -34,6 +36,8 @@
       --ink-soft: #ABA5CC;
       --tile-shadow: #0B0918;
       --focus: #B3ADFF;
+      --panel: #221E3A;
+      --line: #3A3460;
     }
   }
 
@@ -147,6 +151,59 @@
   .caseboard { --card: #e8ebe1; --card-ink: #1c2430; --card-soft: #5c6a63; }
   .movieleague { --card: #111827; --card-ink: #f9fafb; --card-soft: #9ca3af; }
 
+  /* "New games" email signup. */
+  .notify {
+    margin: 48px auto 0;
+    max-width: 560px;
+    padding: 24px 22px;
+    border-radius: 18px;
+    background: var(--panel);
+    box-shadow: 0 5px 0 var(--tile-shadow);
+    text-align: center;
+  }
+  .notify h2 {
+    margin: 0;
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+  .notify p { margin: 6px 0 0; color: var(--ink-soft); }
+  .notify form {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .notify input {
+    flex: 1 1 220px;
+    min-width: 0;
+    padding: 12px 14px;
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    background: var(--page);
+    color: var(--ink);
+    font: inherit;
+  }
+  .notify input::placeholder { color: var(--ink-soft); }
+  .notify button {
+    flex: 0 0 auto;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 12px;
+    background: var(--violet);
+    color: #fff;
+    font: 700 1rem/1.2 "Atkinson Hyperlegible", system-ui, sans-serif;
+    box-shadow: 0 4px 0 var(--tile-shadow);
+    cursor: pointer;
+  }
+  .notify button:active { transform: translateY(2px); box-shadow: 0 2px 0 var(--tile-shadow); }
+  .notify button:disabled { opacity: .6; cursor: default; }
+  .notify .status { min-height: 1.5em; margin-top: 12px; font-size: .9375rem; }
+
+  .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
   footer {
     padding: 28px 16px 36px;
     text-align: center;
@@ -199,7 +256,103 @@
       </a>
     </li>
   </ul>
+
+  <section class="notify" id="notify" aria-labelledby="notify-title" hidden>
+    <h2 id="notify-title">More games are on the way</h2>
+    <p>Leave your email and we'll send a note when a new one launches. Nothing else.</p>
+    <form id="notify-form" novalidate>
+      <label for="notify-email" class="visually-hidden">Email address</label>
+      <input id="notify-email" type="email" name="email" autocomplete="email" inputmode="email" placeholder="you@example.com" required>
+      <button type="submit">Tell me</button>
+    </form>
+    <p class="status" id="notify-status" role="status" aria-live="polite"></p>
+  </section>
 </main>
 <footer>Made by <a href="https://jeremytoeman.com">Jeremy Toeman</a></footer>
+<script>
+  // Settings. Leave a value empty and that feature stays switched off.
+  // AMPLITUDE_API_KEY: the "Froobaloo" project's API key (Amplitude > Settings >
+  //   Projects > Froobaloo > General). Browser keys are public by design.
+  // NEW_GAMES_ENDPOINT: the /exec web app URL of notify/new-games.gs (see the README).
+  var AMPLITUDE_API_KEY = '';
+  var NEW_GAMES_ENDPOINT = '';
+
+  // Analytics: page views plus a click event per game card.
+  var amp = null;
+  function track(name, props) { if (amp) amp.track(name, props); }
+  if (AMPLITUDE_API_KEY) {
+    var s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@amplitude/analytics-browser@2.47.4/lib/scripts/amplitude-min.js';
+    s.async = true;
+    s.onload = function () {
+      if (!window.amplitude) return;
+      amp = window.amplitude;
+      amp.init(AMPLITUDE_API_KEY, {
+        autocapture: { pageViews: true, sessions: true, attribution: true, elementInteractions: false, formInteractions: false, fileDownloads: false },
+        trackingOptions: { ipAddress: false },
+        remoteConfig: { fetchRemoteConfig: false },
+        // Send each event right away with sendBeacon, so a game card click is not
+        // lost when the browser leaves the page.
+        transport: 'beacon',
+        flushQueueSize: 1
+      });
+    };
+    document.head.appendChild(s);
+  }
+
+  var cards = document.querySelectorAll('.games .game');
+  Array.prototype.forEach.call(cards, function (card, i) {
+    card.addEventListener('click', function () {
+      track('Game Card Clicked', { game: card.getAttribute('href').replace(/\//g, ''), position: i + 1 });
+    });
+  });
+
+  // "Tell me about new games" email signup.
+  (function () {
+    if (!NEW_GAMES_ENDPOINT) return;
+    var SAVED_KEY = 'froobaloo_new_games_email';
+    var section = document.getElementById('notify');
+    var form = document.getElementById('notify-form');
+    var input = document.getElementById('notify-email');
+    var button = form.querySelector('button');
+    var status = document.getElementById('notify-status');
+    section.hidden = false;
+
+    var saved = null;
+    try { saved = localStorage.getItem(SAVED_KEY); } catch (e) { /* storage off */ }
+    if (saved) {
+      input.value = saved;
+      status.textContent = "You're on the list as " + saved + '.';
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = input.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        status.textContent = 'That email address doesn\u2019t look right.';
+        input.focus();
+        return;
+      }
+      button.disabled = true;
+      status.textContent = 'Adding you\u2026';
+      // Google Apps Script can't answer a cross-origin request in a way the page can
+      // read, so this sends a plain-text POST we never see the reply to.
+      fetch(NEW_GAMES_ENDPOINT, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ email: email, source: 'hub' })
+      }).then(function () {
+        status.textContent = "You're on the list. We'll email you when a new game launches.";
+        try { localStorage.setItem(SAVED_KEY, email); } catch (e2) { /* storage off */ }
+        track('New Games Signup Submitted');
+      }).catch(function () {
+        status.textContent = 'Something went wrong. Please try again.';
+      }).then(function () {
+        button.disabled = false;
+      });
+    });
+  })();
+</script>
 </body>
 </html>

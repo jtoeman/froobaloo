@@ -27,6 +27,23 @@ paths inside a single-page game (like `/wordsummit/game/2026-10-05`) to that gam
 front door as `?__route=...`, and a small script in the game's `index.html` restores
 the real path. The list of those games lives at the top of `site/404.html`.
 
+## Analytics
+
+The hub page reports to its own Amplitude project, "Froobaloo" (the games have their
+own projects). It records page views, sessions, where visitors came from, and a
+`Game Card Clicked` event (`game`, `position`) when someone opens a game. IP addresses
+are not collected. Set `AMPLITUDE_API_KEY` near the bottom of `site/index.html`; empty
+means no analytics.
+
+## New games email list
+
+The "More games are on the way" box on the hub saves emails to a Google Sheet through
+the Google Apps Script in `notify/new-games.gs`, which also sends the launch email for
+each new game. Setup and "how to announce a game" steps are at the top of that file.
+Set `NEW_GAMES_ENDPOINT` near the bottom of `site/index.html` to the script's /exec URL;
+empty means the box stays hidden. Signups also fire `New Games Signup Submitted` in
+Amplitude. `notify/` is not published to the site.
+
 ## Settings this depends on
 
 - **Secret `HUB_TOKEN`** in this repo and in each game repo: a fine-grained token with
