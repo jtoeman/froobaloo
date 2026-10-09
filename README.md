@@ -8,7 +8,7 @@ each living at its own path.
 | `/` | Hub home page | `site/` in this repo |
 | `/wordsummit/` | Wordsummit | `jtoeman/scrabboggle`, built files on its `site` branch |
 | `/caseboard/` | Caseboard | `jtoeman/caseboard`, plain files on `main` |
-| `/movieleague/` | The Movie League (test build at `/movieleague/test/`) | `jtoeman/movieleague`, built files on its `site` branch |
+| `/movieleague/` | The Movie League (test build at `/movieleague/test/`, hidden from search engines) | `jtoeman/movieleague`, built files on its `site` branch |
 
 ## How it deploys
 
@@ -17,12 +17,13 @@ build), then pings this repo. This repo's workflow (`.github/workflows/deploy.ym
 pulls the hub page and every game together and publishes to GitHub Pages. It runs on a
 push here, on a ping from a game, or by hand from the Actions tab.
 
-The game repos' own GitHub Pages addresses (jtoeman.github.io/...) only redirect here.
+The old jtoeman.github.io addresses are not supported. Links should always point at
+froobaloo.com.
 
 ## Deep links
 
 GitHub Pages serves a single `404.html` for every missing path. `site/404.html` sends
-paths inside a single-page game (like `/wordsummit/game/2026-07-15`) to that game's
+paths inside a single-page game (like `/wordsummit/game/2026-10-05`) to that game's
 front door as `?__route=...`, and a small script in the game's `index.html` restores
 the real path. The list of those games lives at the top of `site/404.html`.
 
@@ -34,6 +35,11 @@ the real path. The list of those games lives at the top of `site/404.html`.
   `froobaloo.com`, Enforce HTTPS on.
 - **DNS (GoDaddy):** `froobaloo.com` A records to GitHub Pages
   (185.199.108.153, .109, .110, .111) and `www` CNAME to `jtoeman.github.io`.
+  GitHub sends `www` and plain `http` to `https://froobaloo.com`.
+- **OneSignal (Caseboard push):** the web app's site URL in the OneSignal dashboard
+  must be `https://froobaloo.com`, and the daily message should open
+  `https://froobaloo.com/caseboard/`. The push worker lives at
+  `/caseboard/OneSignalSDKWorker.js` and only controls `/caseboard/`.
 
 ## Adding a game
 
