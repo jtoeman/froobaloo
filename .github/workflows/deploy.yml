@@ -21,9 +21,12 @@ permissions:
   pages: write
   id-token: write
 
+# Queue instead of cancelling: two games pinging at once used to cancel a run halfway
+# through publishing and fail the next one. Each run pulls the latest of every game,
+# so a queued run still ends up publishing everything.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   deploy:
