@@ -1,0 +1,122 @@
+// Froobaloo kit: shared pieces every Froobaloo game loads from the hub.
+//   <froobaloo-badge></froobaloo-badge>                 the F tile + "froobaloo", links home
+//   <froobaloo-next current="wordsummit"></froobaloo-next> "Next up" card for the end of a game
+//   Froobaloo.markPlayed('wordsummit')                  call when today's game is done
+//   Froobaloo.playedToday()                             ids played today (New York day)
+// Games are one origin (froobaloo.com), so "played today" is shared through localStorage.
+// Clicking a Next up link fires a bubbling "froobaloo:next" event (detail: {from, to})
+// so each game can log it in its own analytics. Adding a game: add it to GAMES.
+(function () {
+  if (window.Froobaloo) return;
+
+  var GAMES = [
+    { id: 'wordsummit', name: 'Wordsummit', path: '/wordsummit/', blurb: 'Find the day’s top-scoring word in five tries.',
+      card: '#1c1917', ink: '#fef3c7', soft: '#a8a29e', edge: '#57534e', art: "<svg viewBox=\"0 0 200 144\" role=\"img\" aria-label=\"A 5 by 5 letter grid with the word SUMMIT traced through it\"><polyline points=\"76,24 100,24 100,48 100,72 76,72 76,96\" fill=\"none\" stroke=\"#60a5fa\" stroke-width=\"6\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/><rect x=\"42\" y=\"14\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"52\" y=\"28.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">Q</text><rect x=\"66\" y=\"14\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"76\" y=\"28.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">S</text><rect x=\"90\" y=\"14\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"100\" y=\"28.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">U</text><rect x=\"114\" y=\"14\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"124\" y=\"28.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">L</text><rect x=\"138\" y=\"14\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"148\" y=\"28.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">E</text><rect x=\"42\" y=\"38\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"52\" y=\"52.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">R</text><rect x=\"66\" y=\"38\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"76\" y=\"52.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">A</text><rect x=\"90\" y=\"38\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"100\" y=\"52.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">M</text><rect x=\"114\" y=\"38\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"124\" y=\"52.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">P</text><rect x=\"138\" y=\"38\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#a855f7\"/><text x=\"148\" y=\"52.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">O</text><rect x=\"42\" y=\"62\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"52\" y=\"76.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">T</text><rect x=\"66\" y=\"62\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"76\" y=\"76.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">I</text><rect x=\"90\" y=\"62\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"100\" y=\"76.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">M</text><rect x=\"114\" y=\"62\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"124\" y=\"76.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">N</text><rect x=\"138\" y=\"62\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"148\" y=\"76.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">D</text><rect x=\"42\" y=\"86\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"52\" y=\"100.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">K</text><rect x=\"66\" y=\"86\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#60a5fa\"/><text x=\"76\" y=\"100.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">T</text><rect x=\"90\" y=\"86\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"100\" y=\"100.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">E</text><rect x=\"114\" y=\"86\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#7e22ce\"/><text x=\"124\" y=\"100.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">W</text><rect x=\"138\" y=\"86\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"148\" y=\"100.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">B</text><rect x=\"42\" y=\"110\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"52\" y=\"124.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">H</text><rect x=\"66\" y=\"110\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"76\" y=\"124.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">O</text><rect x=\"90\" y=\"110\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"100\" y=\"124.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">C</text><rect x=\"114\" y=\"110\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#fef3c7\"/><text x=\"124\" y=\"124.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#292524\">A</text><rect x=\"138\" y=\"110\" width=\"20\" height=\"20\" rx=\"4\" fill=\"#c2410c\"/><text x=\"148\" y=\"124.5\" text-anchor=\"middle\" font-size=\"12\" font-weight=\"700\" fill=\"#ffffff\">G</text></svg>" },
+    { id: 'caseboard', name: 'Caseboard', path: '/caseboard/', blurb: 'Follow the clues to find eight hidden words.',
+      card: '#e8ebe1', ink: '#1c2430', soft: '#5c6a63', edge: '#a9b3a1', art: "<svg viewBox=\"0 0 200 144\" role=\"img\" aria-label=\"A 5 by 5 board of word cards, some marked as found\"><rect x=\"15\" y=\"15\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"24.0\" y=\"22.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"50\" y=\"15\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#d9a44e\" stroke=\"#a8752f\"/><rect x=\"54.5\" y=\"22.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#221704\" opacity=\".7\"/><rect x=\"85\" y=\"15\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"91.0\" y=\"22.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"120\" y=\"15\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"127.5\" y=\"22.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"155\" y=\"15\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"164.0\" y=\"22.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"15\" y=\"39\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#8f4468\" stroke=\"#6b2a4a\"/><rect x=\"19.5\" y=\"46.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#fbeef4\" opacity=\".7\"/><rect x=\"50\" y=\"39\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"56.0\" y=\"46.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"85\" y=\"39\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"92.5\" y=\"46.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"120\" y=\"39\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#d9a44e\" stroke=\"#a8752f\"/><rect x=\"129.0\" y=\"46.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#221704\" opacity=\".7\"/><rect x=\"155\" y=\"39\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"159.5\" y=\"46.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"15\" y=\"63\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#d9a44e\" stroke=\"#a8752f\"/><rect x=\"21.0\" y=\"70.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#221704\" opacity=\".7\"/><rect x=\"50\" y=\"63\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"57.5\" y=\"70.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"85\" y=\"63\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"94.0\" y=\"70.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"120\" y=\"63\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#c26e5c\" stroke=\"#93372c\"/><rect x=\"124.5\" y=\"70.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#fdf3ee\" opacity=\".7\"/><rect x=\"155\" y=\"63\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"161.0\" y=\"70.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"15\" y=\"87\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"22.5\" y=\"94.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"50\" y=\"87\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"59.0\" y=\"94.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"85\" y=\"87\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#d9a44e\" stroke=\"#a8752f\"/><rect x=\"89.5\" y=\"94.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#221704\" opacity=\".7\"/><rect x=\"120\" y=\"87\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"126.0\" y=\"94.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"155\" y=\"87\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"162.5\" y=\"94.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"15\" y=\"111\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"24.0\" y=\"118.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"50\" y=\"111\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"54.5\" y=\"118.5\" width=\"21\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"85\" y=\"111\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"91.0\" y=\"118.5\" width=\"18\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"120\" y=\"111\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#fcfcf8\" stroke=\"#c7cdb9\"/><rect x=\"127.5\" y=\"118.5\" width=\"15\" height=\"3\" rx=\"1.5\" fill=\"#8b9689\" opacity=\".7\"/><rect x=\"155\" y=\"111\" width=\"30\" height=\"18\" rx=\"3\" fill=\"#d9a44e\" stroke=\"#a8752f\"/><rect x=\"164.0\" y=\"118.5\" width=\"12\" height=\"3\" rx=\"1.5\" fill=\"#221704\" opacity=\".7\"/></svg>" },
+    { id: 'movieleague', name: 'The Movie League', path: '/movieleague/', blurb: 'Pick a movie for today’s theme and bet on the top five.',
+      card: '#111827', ink: '#f9fafb', soft: '#9ca3af', edge: '#4b5563', art: "<svg viewBox=\"0 0 200 144\" role=\"img\" aria-label=\"Five movie posters with stacks of voting chips under them\"><rect x=\"19\" y=\"12\" width=\"26\" height=\"54\" rx=\"3\" fill=\"#4b5563\" stroke=\"#fbbf24\" stroke-width=\"2\"/><rect x=\"24\" y=\"55\" width=\"16\" height=\"3\" rx=\"1.5\" fill=\"#9ca3af\" opacity=\".6\"/><ellipse cx=\"32\" cy=\"116\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"32\" cy=\"109\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"32\" cy=\"102\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"32\" cy=\"95\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"32\" cy=\"88\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><rect x=\"53\" y=\"12\" width=\"26\" height=\"54\" rx=\"3\" fill=\"#374151\"/><rect x=\"58\" y=\"55\" width=\"16\" height=\"3\" rx=\"1.5\" fill=\"#9ca3af\" opacity=\".6\"/><ellipse cx=\"66\" cy=\"116\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"66\" cy=\"109\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><ellipse cx=\"66\" cy=\"102\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><rect x=\"87\" y=\"12\" width=\"26\" height=\"54\" rx=\"3\" fill=\"#52525b\"/><rect x=\"92\" y=\"55\" width=\"16\" height=\"3\" rx=\"1.5\" fill=\"#9ca3af\" opacity=\".6\"/><ellipse cx=\"100\" cy=\"116\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><rect x=\"121\" y=\"12\" width=\"26\" height=\"54\" rx=\"3\" fill=\"#3f3f46\"/><rect x=\"126\" y=\"55\" width=\"16\" height=\"3\" rx=\"1.5\" fill=\"#9ca3af\" opacity=\".6\"/><ellipse cx=\"134\" cy=\"116\" rx=\"9\" ry=\"3.6\" fill=\"#fbbf24\" stroke=\"#b45309\" stroke-width=\"1\"/><rect x=\"155\" y=\"12\" width=\"26\" height=\"54\" rx=\"3\" fill=\"#334155\"/><rect x=\"160\" y=\"55\" width=\"16\" height=\"3\" rx=\"1.5\" fill=\"#9ca3af\" opacity=\".6\"/><line x1=\"12\" y1=\"122\" x2=\"188\" y2=\"122\" stroke=\"#374151\" stroke-width=\"2\" stroke-linecap=\"round\"/></svg>" },
+  ];
+  var ICON = "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 64 64\"><rect x=\"4\" y=\"6\" width=\"56\" height=\"56\" rx=\"12\" fill=\"#221D3D\"/><rect x=\"4\" y=\"2\" width=\"56\" height=\"56\" rx=\"12\" fill=\"#6C63E0\"/><text x=\"30\" y=\"44\" text-anchor=\"middle\" font-family=\"Arial Rounded MT Bold, Arial, sans-serif\" font-weight=\"800\" font-size=\"38\" fill=\"#fff\">F</text><text x=\"49\" y=\"52\" text-anchor=\"middle\" font-family=\"Arial, sans-serif\" font-weight=\"700\" font-size=\"11\" fill=\"#fff\" fill-opacity=\".8\">4</text></svg>";
+  var KEY = 'froobaloo-played-v1';
+
+  // Today's date in New York, where every Froobaloo day starts.
+  function today() {
+    try {
+      return new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York' }).format(new Date());
+    } catch (e) {
+      return new Date().toISOString().slice(0, 10);
+    }
+  }
+  function read() {
+    try {
+      var v = JSON.parse(localStorage.getItem(KEY) || 'null');
+      return v && v.day === today() ? v.games : [];
+    } catch (e) {
+      return [];
+    }
+  }
+  function playedToday() { return read().slice(); }
+  function markPlayed(id) {
+    var games = read();
+    if (games.indexOf(id) === -1) games.push(id);
+    try { localStorage.setItem(KEY, JSON.stringify({ day: today(), games: games })); } catch (e) { /* storage off */ }
+    document.querySelectorAll('froobaloo-next').forEach(function (el) { el.render(); });
+  }
+  // The next game after `current` in the list that hasn't been played today.
+  function nextGame(current) {
+    var played = read();
+    var start = 0;
+    GAMES.forEach(function (g, i) { if (g.id === current) start = i + 1; });
+    for (var k = 0; k < GAMES.length; k++) {
+      var g = GAMES[(start + k) % GAMES.length];
+      if (g.id !== current && played.indexOf(g.id) === -1) return g;
+    }
+    return null;
+  }
+
+  var FONT = 'font-family: "Atkinson Hyperlegible", system-ui, -apple-system, sans-serif;';
+
+  class Badge extends HTMLElement {
+    connectedCallback() {
+      if (this.shadowRoot) return;
+      var root = this.attachShadow({ mode: 'open' });
+      root.innerHTML =
+        '<style>' +
+        ':host { display: inline-flex; }' +
+        'a { display: inline-flex; align-items: center; gap: 6px; color: inherit; text-decoration: none; ' + FONT + ' font-weight: 700; font-size: 13px; line-height: 1; opacity: .85; }' +
+        'a:hover { opacity: 1; }' +
+        'svg { width: 20px; height: 20px; flex: none; }' +
+        '</style>' +
+        '<a href="/" aria-label="More games on Froobaloo">' + ICON + '<span>froobaloo</span></a>';
+    }
+  }
+
+  class Next extends HTMLElement {
+    connectedCallback() {
+      if (!this.shadowRoot) this.attachShadow({ mode: 'open' });
+      this.render();
+    }
+    render() {
+      if (!this.shadowRoot) return;
+      var current = this.getAttribute('current');
+      var g = nextGame(current);
+      var style =
+        '<style>' +
+        ':host { display: block; ' + FONT + ' }' +
+        '.card { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 14px; text-decoration: none; border: 2px solid; }' +
+        '.card:active { transform: translateY(1px); }' +
+        '.art { flex: none; width: 64px; }' +
+        '.art svg { display: block; width: 100%; height: auto; }' +
+        '.txt { min-width: 0; flex: 1; }' +
+        '.label { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .75; }' +
+        '.name { font-size: 16px; font-weight: 700; line-height: 1.2; }' +
+        '.blurb { font-size: 13px; line-height: 1.3; margin-top: 2px; }' +
+        '.chev { flex: none; font-size: 22px; line-height: 1; }' +
+        '.done { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; border: 2px dashed currentColor; opacity: .8; font-size: 14px; line-height: 1.35; }' +
+        '.done svg { width: 28px; height: 28px; flex: none; }' +
+        '.done a { color: inherit; }' +
+        '</style>';
+      if (!g) {
+        this.shadowRoot.innerHTML = style +
+          '<div class="done">' + ICON + '<span>🎉 You’ve played every Froobaloo game today. New puzzles at midnight ET. <a href="/">See all games</a></span></div>';
+        return;
+      }
+      var href = g.path + '?from=' + encodeURIComponent(current || '');
+      this.shadowRoot.innerHTML = style +
+        '<a class="card" href="' + href + '" style="background:' + g.card + ';color:' + g.ink + ';border-color:' + g.edge + '">' +
+        '<div class="art" aria-hidden="true">' + g.art + '</div>' +
+        '<div class="txt"><div class="label">Next up</div><div class="name">' + g.name + '</div>' +
+        '<div class="blurb" style="color:' + g.soft + '">' + g.blurb + '</div></div>' +
+        '<div class="chev" style="color:' + g.soft + '" aria-hidden="true">›</div></a>';
+      var self = this;
+      this.shadowRoot.querySelector('a').addEventListener('click', function () {
+        self.dispatchEvent(new CustomEvent('froobaloo:next', { bubbles: true, composed: true, detail: { from: current, to: g.id } }));
+      });
+    }
+  }
+
+  window.Froobaloo = { games: GAMES, markPlayed: markPlayed, playedToday: playedToday, nextGame: nextGame };
+  if (!customElements.get('froobaloo-badge')) customElements.define('froobaloo-badge', Badge);
+  if (!customElements.get('froobaloo-next')) customElements.define('froobaloo-next', Next);
+})();

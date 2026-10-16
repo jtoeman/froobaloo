@@ -119,6 +119,8 @@
     line-height: 1.1;
   }
   .game p { margin: 6px 0 0; color: var(--card-soft); font-size: 1rem; }
+  /* "Played today" mark, filled in by the kit (kit/froobaloo.js). */
+  .played { display: inline-block; margin-left: 8px; padding: 2px 8px; border-radius: 999px; background: var(--mint); color: #fff; font: 700 .75rem/1.4 "Atkinson Hyperlegible", system-ui, sans-serif; vertical-align: middle; }
 
   .wordsummit { --card: #1c1917; --card-ink: #fef3c7; --card-soft: #a8a29e; --card-edge: #57534e; }
   .caseboard { --card: #e8ebe1; --card-ink: #1c2430; --card-soft: #5c6a63; --card-edge: #a9b3a1; }
@@ -256,6 +258,22 @@
     <p class="status" id="notify-status" role="status" aria-live="polite"></p>
   </section>
 </main>
+<script src="/kit/froobaloo.js"></script>
+<script>
+  // Mark the games played today (all games share this origin's storage).
+  (function () {
+    if (!window.Froobaloo) return;
+    var played = Froobaloo.playedToday();
+    document.querySelectorAll('a.game').forEach(function (card) {
+      var id = card.classList[1];
+      if (played.indexOf(id) === -1) return;
+      var mark = document.createElement('span');
+      mark.className = 'played';
+      mark.textContent = '\u2713 Played today';
+      card.querySelector('h2').appendChild(mark);
+    });
+  })();
+</script>
 <footer>Made by <a href="https://jeremytoeman.com">Jeremy Toeman</a></footer>
 <script>
   // Settings. Leave a value empty and that feature stays switched off.

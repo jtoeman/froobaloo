@@ -66,3 +66,13 @@ Amplitude. `notify/` is not published to the site.
 3. If it is a single-page app with its own paths, add `/<slug>/` to the list in
    `site/404.html` and the `__route` restore script to its `index.html`.
 4. Add its card to `site/index.html`.
+
+## Shared kit for games
+
+`site/kit/froobaloo.js` is loaded by every game (`<script src="/kit/froobaloo.js" defer>`).
+It holds the list of games and provides `<froobaloo-badge>` (the F tile linking home),
+`<froobaloo-next current="<game id>">` (the end-of-game "Next up" card: the next game not
+played today) and `Froobaloo.markPlayed(id)`. "Played today" lives in localStorage
+(`froobaloo-played-v1`, New York day), shared because all games are on froobaloo.com.
+The hub page uses it to show "Played today" on each card. Adding a game: add it to
+`GAMES` in the kit and a card here.
