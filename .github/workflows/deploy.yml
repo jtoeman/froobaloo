@@ -8,6 +8,7 @@ name: Deploy froobaloo.com
 #   /wordsummit/    jtoeman/scrabboggle@site       (built by that repo)
 #   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
 #   /movieleague/   jtoeman/movieleague@site       (built by that repo, includes /test/)
+#   /sourceword/    jtoeman/sourceword@site        (built files, no build step)
 
 on:
   push:
@@ -58,12 +59,20 @@ jobs:
           path: _games/movieleague
           token: ${{ secrets.HUB_TOKEN }}
 
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/sourceword
+          ref: site
+          path: _games/sourceword
+          token: ${{ secrets.HUB_TOKEN }}
+
       - name: Assemble the site
         run: |
           mkdir _site
           cp -R site/. _site/
           rsync -a --exclude .git --exclude 404.html _games/wordsummit/ _site/wordsummit/
           rsync -a --exclude .git --exclude 404.html _games/movieleague/ _site/movieleague/
+          rsync -a --exclude .git --exclude .github _games/sourceword/ _site/sourceword/
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude '*.gs' \
             _games/caseboard/ _site/caseboard/
           find _site -maxdepth 2 -type f | sort
