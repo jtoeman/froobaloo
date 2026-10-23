@@ -126,8 +126,8 @@
   .caseboard { --card: #e8ebe1; --card-ink: #1c2430; --card-soft: #5c6a63; --card-edge: #a9b3a1; }
   .movieleague { --card: #111827; --card-ink: #f9fafb; --card-soft: #9ca3af; --card-edge: #4b5563; }
   .sourceword { --card: #17142A; --card-ink: #F2EFE6; --card-soft: #A29DBE; --card-edge: #3A3560; }
-  .sourceword { position: relative; }
-  .sourceword .tag { position: absolute; top: 10px; right: 10px; background: #F5B82E; color: #17142A; font: 700 10px/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; }
+  .sourceword, .movieleague { position: relative; }
+  .game .tag { position: absolute; top: 10px; right: 10px; background: #F5B82E; color: #17142A; font: 700 10px/1 Arial, sans-serif; letter-spacing: .08em; text-transform: uppercase; padding: 5px 8px; border-radius: 999px; }
 
   /* Phones: short horizontal cards so several games fit on one screen. */
   @media (max-width: 599px) {
@@ -136,6 +136,9 @@
     .art { flex: 0 0 34%; max-width: 140px; padding: 12px 0 12px 12px; }
     .info { flex: 1; min-width: 0; padding: 12px 6px 12px 14px; }
     .game h2 { font-size: 1.375rem; }
+    /* Leave room above the title so a Now testing tag never covers it. */
+    .game .tag { top: 8px; right: 8px; }
+    .game:has(.tag) .info { padding-top: 32px; }
     .game p { margin-top: 4px; font-size: .9375rem; line-height: 1.35; }
     .game::after {
       content: "";
@@ -241,6 +244,7 @@
     </li>
     <li>
       <a class="game movieleague" href="/movieleague/">
+        <span class="tag">Now testing</span>
         <div class="art"><svg viewBox="0 0 200 144" role="img" aria-label="Five movie posters with stacks of voting chips under them"><rect x="19" y="12" width="26" height="54" rx="3" fill="#4b5563" stroke="#fbbf24" stroke-width="2"/><rect x="24" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="32" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="109" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="102" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="95" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="32" cy="88" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="53" y="12" width="26" height="54" rx="3" fill="#374151"/><rect x="58" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="66" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="66" cy="109" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><ellipse cx="66" cy="102" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="87" y="12" width="26" height="54" rx="3" fill="#52525b"/><rect x="92" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="100" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="121" y="12" width="26" height="54" rx="3" fill="#3f3f46"/><rect x="126" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><ellipse cx="134" cy="116" rx="9" ry="3.6" fill="#fbbf24" stroke="#b45309" stroke-width="1"/><rect x="155" y="12" width="26" height="54" rx="3" fill="#334155"/><rect x="160" y="55" width="16" height="3" rx="1.5" fill="#9ca3af" opacity=".6"/><line x1="12" y1="122" x2="188" y2="122" stroke="#374151" stroke-width="2" stroke-linecap="round"/></svg></div>
         <div class="info">
           <h2>The Movie League</h2>
