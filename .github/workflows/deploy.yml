@@ -9,7 +9,7 @@ name: Deploy froobaloo.com
 #   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
 #   /movieleague/   jtoeman/movieleague@site       (built by that repo, includes /test/)
 #   /sourceword/    jtoeman/sourceword@site        (built files, no build step)
-#   /cryptadoodle/  jtoeman/cryptadoodle@main      (hidden test build, plain files)
+#   /cryptadoodle/  jtoeman/cryptadoodle@main      (in testing, menu card, plain files)
 
 on:
   push:
@@ -80,7 +80,7 @@ jobs:
           rsync -a --exclude .git --exclude 404.html _games/wordsummit/ _site/wordsummit/
           rsync -a --exclude .git --exclude 404.html _games/movieleague/ _site/movieleague/
           rsync -a --exclude .git --exclude .github _games/sourceword/ _site/sourceword/
-          # Cryptadoodle is a hidden test build: served here, but no menu card.
+          # Cryptadoodle: menu card tagged In testing (site/index.html).
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude GAME.md \
             _games/cryptadoodle/ _site/cryptadoodle/
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude '*.gs' \
