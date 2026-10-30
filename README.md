@@ -9,6 +9,7 @@ each living at its own path.
 | `/wordsummit/` | Wordsummit | `jtoeman/scrabboggle`, built files on its `site` branch |
 | `/caseboard/` | Caseboard | `jtoeman/caseboard`, plain files on `main` |
 | `/movieleague/` | The Movie League (test build at `/movieleague/test/`, hidden from search engines) | `jtoeman/movieleague`, built files on its `site` branch |
+| `/cryptadoodle/` | Cryptadoodle, hidden test build (not on the menu, `noindex`) | `jtoeman/cryptadoodle`, plain files on `main` |
 
 ## How it deploys
 

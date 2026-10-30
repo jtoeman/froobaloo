@@ -9,6 +9,7 @@ name: Deploy froobaloo.com
 #   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
 #   /movieleague/   jtoeman/movieleague@site       (built by that repo, includes /test/)
 #   /sourceword/    jtoeman/sourceword@site        (built files, no build step)
+#   /cryptadoodle/  jtoeman/cryptadoodle@main      (hidden test build, plain files)
 
 on:
   push:
@@ -66,6 +67,12 @@ jobs:
           path: _games/sourceword
           token: ${{ secrets.HUB_TOKEN }}
 
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/cryptadoodle
+          ref: main
+          path: _games/cryptadoodle
+
       - name: Assemble the site
         run: |
           mkdir _site
@@ -73,6 +80,9 @@ jobs:
           rsync -a --exclude .git --exclude 404.html _games/wordsummit/ _site/wordsummit/
           rsync -a --exclude .git --exclude 404.html _games/movieleague/ _site/movieleague/
           rsync -a --exclude .git --exclude .github _games/sourceword/ _site/sourceword/
+          # Cryptadoodle is a hidden test build: served here, but no menu card.
+          rsync -a --exclude .git --exclude .github --exclude README.md --exclude GAME.md \
+            _games/cryptadoodle/ _site/cryptadoodle/
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude '*.gs' \
             _games/caseboard/ _site/caseboard/
           find _site -maxdepth 2 -type f | sort
