@@ -4,11 +4,14 @@ name: Deploy froobaloo.com
 # then publishes to GitHub Pages. Runs when this repo changes, when a game repo
 # pings it (repository_dispatch "game-updated"), or by hand.
 #
+# Rule: a game that builds publishes its built files to its own `site` branch, and the hub
+# copies that. A game with plain files is copied from its `main` branch.
+#
 #   /               site/                          (this repo)
-#   /wordsummit/    jtoeman/scrabboggle@site       (built by that repo)
+#   /wordsummit/    jtoeman/scrabboggle@site       (builds; its own repo publishes site)
+#   /movieleague/   jtoeman/movieleague@site       (builds; its own repo publishes site, includes /test/)
 #   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
-#   /movieleague/   jtoeman/movieleague@site       (built by that repo, includes /test/)
-#   /sourceword/    jtoeman/sourceword@site        (built files, no build step)
+#   /sourceword/    jtoeman/sourceword@main        (plain files; the hub generates admin37/)
 #   /cryptadoodle/  jtoeman/cryptadoodle@main      (in testing, menu card, plain files)
 
 on:
@@ -63,9 +66,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           repository: jtoeman/sourceword
-          ref: site
+          ref: main
           path: _games/sourceword
-          token: ${{ secrets.HUB_TOKEN }}
 
       - uses: actions/checkout@v4
         with:
@@ -79,7 +81,16 @@ jobs:
           cp -R site/. _site/
           rsync -a --exclude .git --exclude 404.html _games/wordsummit/ _site/wordsummit/
           rsync -a --exclude .git --exclude 404.html _games/movieleague/ _site/movieleague/
-          rsync -a --exclude .git --exclude .github _games/sourceword/ _site/sourceword/
+          # Sourceword: plain files from main. Tools, sheets and the admin page are not served;
+          # the admin page is generated below, as before.
+          rsync -a --exclude .git --exclude .github --exclude tools --exclude sheets \
+            --exclude admin37 --exclude README.md _games/sourceword/ _site/sourceword/
+          mkdir -p _site/sourceword/admin37
+          sed \
+            -e 's|<title>Sourceword</title>|<title>Sourceword admin</title>|' \
+            -e 's|<meta name="robots" content="noindex">|<meta name="robots" content="noindex, nofollow">|' \
+            -e 's|<head>|<head>\n  <base href="/sourceword/">|' \
+            _site/sourceword/index.html > _site/sourceword/admin37/index.html
           # Cryptadoodle: menu card tagged In testing (site/index.html).
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude GAME.md \
             _games/cryptadoodle/ _site/cryptadoodle/
