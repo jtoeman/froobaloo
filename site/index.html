@@ -213,10 +213,12 @@
 
   footer {
     padding: 28px 16px 36px;
-    text-align: center;
+    display: flex;
+    overflow-x: auto;
     color: var(--ink-soft);
-    font-size: .9375rem;
+    font-size: .75rem;
   }
+  footer .credits { margin: auto; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -306,7 +308,7 @@
     });
   })();
 </script>
-<footer>Made by <a href="https://jeremytoeman.com">Jeremy Toeman</a></footer>
+<footer><p class="credits">Games 100% Conceived and Curated by <a href="https://jeremytoeman.com">Jeremy Toeman</a>. Game Code 100% Built by Claude.</p></footer>
 <script>
   // Settings. Leave a value empty and that feature stays switched off.
   // AMPLITUDE_API_KEY: the "Froobaloo" project's API key (Amplitude > Settings >
