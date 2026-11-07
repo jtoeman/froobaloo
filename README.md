@@ -10,6 +10,7 @@ each living at its own path.
 | `/caseboard/` | Caseboard | `jtoeman/caseboard`, plain files on `main` |
 | `/movieleague/` | The Movie League (test build at `/movieleague/test/`, hidden from search engines) | `jtoeman/movieleague`, built files on its `site` branch |
 | `/cryptadoodle/` | Cryptadoodle, menu card tagged In testing (game page `noindex`) | `jtoeman/cryptadoodle`, plain files on `main` |
+| `/goat/` | The GOAT, menu card tagged In prototype | `jtoeman/thegoat`, plain files on `main` |
 
 ## How it deploys
 
