@@ -13,6 +13,7 @@ name: Deploy froobaloo.com
 #   /caseboard/     jtoeman/caseboard@main         (plain files, no build)
 #   /sourceword/    jtoeman/sourceword@main        (plain files; the hub generates admin37/)
 #   /cryptadoodle/  jtoeman/cryptadoodle@main      (in testing, menu card, plain files)
+#   /goat/          jtoeman/thegoat@main           (in prototype, plain files; Worker files excluded)
 
 on:
   push:
@@ -75,6 +76,12 @@ jobs:
           ref: main
           path: _games/cryptadoodle
 
+      - uses: actions/checkout@v4
+        with:
+          repository: jtoeman/thegoat
+          ref: main
+          path: _games/goat
+
       - name: Assemble the site
         run: |
           mkdir _site
@@ -96,6 +103,10 @@ jobs:
             _games/cryptadoodle/ _site/cryptadoodle/
           rsync -a --exclude .git --exclude .github --exclude README.md --exclude '*.gs' \
             _games/caseboard/ _site/caseboard/
+          # GOAT: plain files from main. The Worker's config and the photo ingest are not served.
+          rsync -a --exclude .git --exclude .github --exclude ingest --exclude scripts --exclude worker.js \
+            --exclude wrangler.jsonc --exclude sync-categories.gs --exclude README.md --exclude .assetsignore \
+            _games/goat/ _site/goat/
           find _site -maxdepth 2 -type f | sort
 
       - uses: actions/configure-pages@v5
