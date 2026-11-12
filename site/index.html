@@ -161,6 +161,13 @@
   }
 
   /* "New games" email signup. */
+  .welcome { position: relative; margin: 0 0 22px; padding: 16px 18px; background: var(--panel); border: 2px solid var(--ink); border-radius: 16px; color: var(--ink); line-height: 1.5; }
+  .welcome[hidden] { display: none; }
+  .welcome p { margin: 0 0 12px; }
+  .welcome a { color: var(--violet); font-weight: 700; }
+  .welcome button { font: inherit; font-weight: 700; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 10px; background: var(--violet); color: #fff; cursor: pointer; box-shadow: 0 3px 0 var(--tile-shadow); }
+  .welcome button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tile-shadow); }
+  .welcome button:focus-visible, .welcome a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
   .notify {
     margin: 48px auto 0;
     max-width: 560px;
@@ -231,6 +238,11 @@
          sizes="(max-width: 1072px) calc(100vw - 32px), 1040px"
          width="1280" height="213" alt="Froobaloo" fetchpriority="high">
   </h1>
+
+  <section class="welcome" id="welcome" aria-label="Welcome" hidden>
+    <p>Welcome to Froobaloo.com, <a href="https://jeremytoeman.com">Jeremy Toeman</a>'s fun corner of the Internet with daily games &amp; diversions. Hope you have fun!</p>
+    <button type="button" id="welcome-close">Got it</button>
+  </section>
 
   <ul class="games">
     <li>
@@ -305,6 +317,20 @@
   </section>
 </main>
 <script src="/kit/froobaloo.js"></script>
+<script>
+  // Welcome panel: shown once per browser. If storage is blocked, it shows on each visit.
+  (function () {
+    var KEY = 'froobaloo_welcome_v1';
+    var box = document.getElementById('welcome');
+    var seen = false;
+    try { seen = localStorage.getItem(KEY) === '1'; } catch (e) { /* storage off */ }
+    if (!seen) box.hidden = false;
+    document.getElementById('welcome-close').addEventListener('click', function () {
+      box.hidden = true;
+      try { localStorage.setItem(KEY, '1'); } catch (e) { /* storage off */ }
+    });
+  })();
+</script>
 <script>
   // Mark the games played today (all games share this origin's storage).
   (function () {
