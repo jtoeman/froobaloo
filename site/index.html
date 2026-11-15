@@ -166,8 +166,9 @@
   /* Welcome: a tilted sticker card, about 1.5 game boxes wide. */
   .welcome {
     position: relative;
+    width: 100%;
     max-width: 500px;
-    margin: 30px auto 34px;
+    margin: 0;
     padding: 34px 28px 26px;
     background: var(--panel);
     border: 2px solid var(--ink);
@@ -178,7 +179,17 @@
     line-height: 1.6;
     transform: rotate(-.6deg);
   }
-  .welcome[hidden] { display: none; }
+  /* Modal: a dimmed layer over the whole page; the hub underneath does not move. */
+  .welcome-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    display: grid;
+    place-items: center;
+    padding: 24px 16px;
+    background: rgba(17, 14, 36, .6);
+  }
+  .welcome-overlay[hidden] { display: none; }
   .welcome .sticker {
     position: absolute;
     top: -26px;
@@ -197,19 +208,22 @@
   }
   .welcome .lead {
     margin: 4px 0 16px;
+    font-size: 1.25rem;
+    line-height: 1.45;
+  }
+  .welcome .lead strong {
     font-family: "Baloo 2", system-ui, sans-serif;
-    font-weight: 700;
-    font-size: 1.4rem;
-    line-height: 1.3;
+    font-weight: 800;
+    font-size: 1.6rem;
   }
   .welcome .lead a, .welcome a {
     color: var(--violet);
-    font-weight: 800;
+    font-weight: inherit;
     text-decoration-thickness: 3px;
     text-underline-offset: 4px;
   }
   .welcome .why { margin: 0 0 22px; font-size: 1.1rem; }
-  .welcome .why b { color: var(--violet); }
+  .welcome .why b { color: var(--violet); font-weight: 700; }
   .welcome button {
     font: inherit;
     font-family: "Baloo 2", system-ui, sans-serif;
@@ -301,12 +315,14 @@
          width="1280" height="213" alt="Froobaloo" fetchpriority="high">
   </h1>
 
-  <section class="welcome" id="welcome" aria-label="Welcome" hidden>
-    <span class="sticker" aria-hidden="true">👋</span>
-    <p class="lead">Welcome to Froobaloo, <a href="https://jeremytoeman.com">Jeremy Toeman</a>'s fun corner of the Internet with daily games &amp; diversions. Hope you have fun!</p>
-    <p class="why">Why <b>Froobaloo</b>? Because it's silly, and the Internet needs more silly.</p>
-    <button type="button" id="welcome-close">Got it</button>
-  </section>
+  <div class="welcome-overlay" id="welcome" hidden>
+    <section class="welcome" role="dialog" aria-modal="true" aria-label="Welcome">
+      <span class="sticker" aria-hidden="true">👋</span>
+      <p class="lead"><strong>Welcome</strong> to Froobaloo, <a href="https://jeremytoeman.com">Jeremy Toeman</a>'s fun corner of the Internet with daily games &amp; diversions. Hope you have fun!</p>
+      <p class="why">Why <b>Froobaloo</b>? Because it's silly, and the Internet needs more silly.</p>
+      <button type="button" id="welcome-close">Let's Play!</button>
+    </section>
+  </div>
 
   <ul class="games">
     <li>
@@ -382,17 +398,28 @@
 </main>
 <script src="/kit/froobaloo.js"></script>
 <script>
-  // Welcome panel: shown once per browser. If storage is blocked, it shows on each visit.
+  // Welcome modal: shown once per browser. If storage is blocked, it shows on each visit.
   (function () {
     var KEY = 'froobaloo_welcome_v1';
-    var box = document.getElementById('welcome');
+    var overlay = document.getElementById('welcome');
+    var closeBtn = document.getElementById('welcome-close');
     var seen = false;
     try { seen = localStorage.getItem(KEY) === '1'; } catch (e) { /* storage off */ }
-    if (!seen) box.hidden = false;
-    document.getElementById('welcome-close').addEventListener('click', function () {
-      box.hidden = true;
+    function onKey(e) { if (e.key === 'Escape') close(); }
+    function close() {
+      overlay.hidden = true;
+      document.body.style.overflow = '';
+      document.removeEventListener('keydown', onKey);
       try { localStorage.setItem(KEY, '1'); } catch (e) { /* storage off */ }
-    });
+    }
+    if (!seen) {
+      overlay.hidden = false;
+      document.body.style.overflow = 'hidden';
+      document.addEventListener('keydown', onKey);
+      closeBtn.focus();
+    }
+    closeBtn.addEventListener('click', close);
+    overlay.addEventListener('click', function (e) { if (e.target === overlay) close(); });
   })();
 </script>
 <script>
