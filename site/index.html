@@ -163,13 +163,73 @@
   }
 
   /* "New games" email signup. */
-  .welcome { position: relative; margin: 0 0 22px; padding: 16px 18px; background: var(--panel); border: 2px solid var(--ink); border-radius: 16px; color: var(--ink); line-height: 1.5; }
+  /* Welcome: a tilted sticker card, about 1.5 game boxes wide. */
+  .welcome {
+    position: relative;
+    max-width: 500px;
+    margin: 30px auto 34px;
+    padding: 34px 28px 26px;
+    background: var(--panel);
+    border: 2px solid var(--ink);
+    border-radius: 18px;
+    box-shadow: 0 5px 0 var(--tile-shadow);
+    color: var(--ink);
+    text-align: center;
+    line-height: 1.6;
+    transform: rotate(-.6deg);
+  }
   .welcome[hidden] { display: none; }
-  .welcome p { margin: 0 0 12px; }
-  .welcome a { color: var(--violet); font-weight: 700; }
-  .welcome button { font: inherit; font-weight: 700; padding: 8px 16px; border: 2px solid var(--ink); border-radius: 10px; background: var(--violet); color: #fff; cursor: pointer; box-shadow: 0 3px 0 var(--tile-shadow); }
+  .welcome .sticker {
+    position: absolute;
+    top: -26px;
+    left: 50%;
+    width: 52px;
+    height: 52px;
+    margin-left: -26px;
+    display: grid;
+    place-items: center;
+    font-size: 1.6rem;
+    background: #F5B82E;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    box-shadow: 0 3px 0 var(--tile-shadow);
+    transform: rotate(-8deg);
+  }
+  .welcome .lead {
+    margin: 4px 0 16px;
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    line-height: 1.3;
+  }
+  .welcome .lead a, .welcome a {
+    color: var(--violet);
+    font-weight: 800;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
+  }
+  .welcome .why { margin: 0 0 22px; font-size: 1.1rem; }
+  .welcome .why b { color: var(--violet); }
+  .welcome button {
+    font: inherit;
+    font-family: "Baloo 2", system-ui, sans-serif;
+    font-weight: 800;
+    font-size: 1.15rem;
+    padding: 10px 30px;
+    border: 2px solid var(--ink);
+    border-radius: 12px;
+    background: var(--violet);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 4px 0 var(--tile-shadow);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .welcome button:hover { transform: translateY(-2px); box-shadow: 0 6px 0 var(--tile-shadow); }
   .welcome button:active { transform: translateY(2px); box-shadow: 0 1px 0 var(--tile-shadow); }
   .welcome button:focus-visible, .welcome a:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .welcome, .welcome button { transform: none; transition: none; }
+  }
   .notify {
     margin: 48px auto 0;
     max-width: 560px;
@@ -242,7 +302,9 @@
   </h1>
 
   <section class="welcome" id="welcome" aria-label="Welcome" hidden>
-    <p>Welcome to Froobaloo.com, <a href="https://jeremytoeman.com">Jeremy Toeman</a>'s fun corner of the Internet with daily games &amp; diversions. Hope you have fun!</p>
+    <span class="sticker" aria-hidden="true">👋</span>
+    <p class="lead">Welcome to Froobaloo, <a href="https://jeremytoeman.com">Jeremy Toeman</a>'s fun corner of the Internet with daily games &amp; diversions. Hope you have fun!</p>
+    <p class="why">Why <b>Froobaloo</b>? Because it's silly, and the Internet needs more silly.</p>
     <button type="button" id="welcome-close">Got it</button>
   </section>
 
