@@ -107,6 +107,20 @@ jobs:
           rsync -a --exclude .git --exclude .github --exclude ingest --exclude scripts --exclude worker.js \
             --exclude wrangler.jsonc --exclude sync-categories.gs --exclude README.md --exclude .assetsignore \
             _games/goat/ _site/goat/
+          # Social cards: each game page points at its own 1200x630 image in /og/, unless the
+          # game's own page already sets an og:image. The hub's own image is in site/index.html.
+          inject_og() {
+            f="_site/$1/index.html"
+            [ -f "$f" ] || return 0
+            grep -q 'property="og:image"' "$f" && return 0
+            sed -i "0,/<\/head>/s||<meta property=\"og:image\" content=\"https://froobaloo.com/og/$2.png\"><meta property=\"og:image:width\" content=\"1200\"><meta property=\"og:image:height\" content=\"630\"><meta name=\"twitter:card\" content=\"summary_large_image\"></head>|" "$f"
+          }
+          inject_og wordsummit wordsummit
+          inject_og movieleague movieleague
+          inject_og sourceword sourceword
+          inject_og cryptadoodle cryptadoodle
+          inject_og caseboard caseboard
+          inject_og goat goat
           find _site -maxdepth 2 -type f | sort
 
       - uses: actions/configure-pages@v5
