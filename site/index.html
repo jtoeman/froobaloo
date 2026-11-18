@@ -342,12 +342,12 @@
     <p class="status" id="notify-status" role="status" aria-live="polite"></p>
   </section>
 </main>
-<script src="/kit/froobaloo.js"></script>
+<script src="/kit/froobaloo.js?v=6"></script>
 <script>
   // Home cards come from the kit's GAMES list, so the list lives in one place.
   (function () {
     var list = document.getElementById('games');
-    window.Froobaloo.games.forEach(function (g) {
+    window.Froobaloo.games.slice().sort(function (a, b) { return a.home - b.home; }).forEach(function (g) {
       var li = document.createElement('li');
       var a = document.createElement('a');
       a.className = 'game ' + g.id;
