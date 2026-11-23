@@ -16,8 +16,13 @@ each living at its own path.
 
 Each game repo builds itself and publishes to its `site` branch (Caseboard needs no
 build), then pings this repo. This repo's workflow (`.github/workflows/deploy.yml`)
-pulls the hub page and every game together and publishes to GitHub Pages. It runs on a
-push here, on a ping from a game, or by hand from the Actions tab.
+pulls the hub page and the static games together and publishes them to GitHub Pages.
+It runs on a push here, on a ping from a game, or by hand from the Actions tab.
+
+The GOAT is the exception: it is a Cloudflare Worker deployed from `jtoeman/thegoat`
+(its `deploy-site.yml`), with routes for `froobaloo.com/goat`. This workflow copies its
+static files too, so which one serves `/goat` depends on DNS and routing. Confirm before
+changing either.
 
 The old jtoeman.github.io addresses are not supported. Links should always point at
 froobaloo.com.
