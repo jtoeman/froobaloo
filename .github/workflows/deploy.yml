@@ -14,6 +14,11 @@ name: Deploy froobaloo.com
 #   /sourceword/    jtoeman/sourceword@main        (plain files; the hub generates admin37/)
 #   /cryptadoodle/  jtoeman/cryptadoodle@main      (in testing, menu card, plain files)
 #   /goat/          jtoeman/thegoat@main           (in prototype, plain files; Worker files excluded)
+#
+# Note: The GOAT is also deployed as its own Cloudflare Worker from jtoeman/thegoat
+# (deploy-site.yml), which has routes for froobaloo.com/goat. This workflow does not
+# deploy that Worker. Which of the two serves /goat on froobaloo.com depends on DNS and
+# routing, and is an open item in FROOBALOO_DEVELOPER_NOTES.md.
 
 on:
   push:
